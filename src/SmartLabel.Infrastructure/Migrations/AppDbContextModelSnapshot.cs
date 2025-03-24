@@ -303,6 +303,32 @@ namespace SmartLabel.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("SmartLabel.Domain.Entities.Identity.UserToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserTokens");
+                });
+
             modelBuilder.Entity("SmartLabel.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -425,6 +451,17 @@ namespace SmartLabel.Infrastructure.Migrations
                     b.Navigation("Banner");
                 });
 
+            modelBuilder.Entity("SmartLabel.Domain.Entities.Identity.UserToken", b =>
+                {
+                    b.HasOne("SmartLabel.Domain.Entities.Identity.ApplicationUser", "User")
+                        .WithMany("Tokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("SmartLabel.Domain.Entities.Product", b =>
                 {
                     b.HasOne("SmartLabel.Domain.Entities.Category", "Category")
@@ -455,6 +492,11 @@ namespace SmartLabel.Infrastructure.Migrations
             modelBuilder.Entity("SmartLabel.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("SmartLabel.Domain.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.Navigation("Tokens");
                 });
 
             modelBuilder.Entity("SmartLabel.Domain.Entities.Product", b =>
