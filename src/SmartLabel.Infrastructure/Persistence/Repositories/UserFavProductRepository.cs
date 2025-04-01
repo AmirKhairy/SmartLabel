@@ -1,43 +1,52 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartLabel.Application.Repositories;
 using SmartLabel.Domain.Entities;
-using SmartLabel.Domain.Repositories;
-using SmartLabel.Domain.Shared.Results;
 using SmartLabel.Infrastructure.Persistence.Data;
+using UserFavProductDto = SmartLabel.Application.Features.UserFavProducts.Query.Results.UserFavProductDto;
 
 namespace SmartLabel.Infrastructure.Persistence.Repositories;
 public class UserFavProductRepository(AppDbContext context) : IUserFavProductRepository
 {
-	public async Task<IEnumerable<UserFavProductResult>> GetFavProductsByUser(int userId)
+	public async Task<IEnumerable<UserFavProductDto>> GetFavProductsByUserAsync(int userId)
 	{
-		var res = await context.UserFavProducts
+		return await context.UserFavProducts
+			.AsNoTracking()
 			.Where(x => x.UserId == userId)
-			.Select(ufp => new UserFavProductResult()
+			.Select(ufp => new UserFavProductDto()
 			{
 				Name = ufp.Product.Name,
 				OldPrice = ufp.Product.OldPrice,
 				Discount = ufp.Product.Discount,
 				NewPrice = ufp.Product.NewPrice,
 				CategoryName = ufp.Product.Category.Name,
-				ProductImageUrl = ufp.Product.Images.FirstOrDefault().ImageUrl
+				ProductImageUrl = ufp.Product.Images!
+					.OrderBy(pi => pi.Id)
+					.Select(pi => pi.ImageUrl)
+					.FirstOrDefault()
 			})
 			.ToListAsync();
-
-		return res;
 	}
-	public async Task AddFavProduct(UserFavProduct userFavProduct)
+	public async Task AddFavProductAsync(UserFavProduct userFavProduct)
 	{
 		await context.UserFavProducts.AddAsync(userFavProduct);
 		await context.SaveChangesAsync();
 	}
-
-	public async Task<UserFavProduct?> GetUserFavProduct(int userId, int productId)
+	public async Task<UserFavProduct?> GetUserFavProductAsync(int userId, int productId)
 	{
-		return await context.UserFavProducts.FirstOrDefaultAsync(x => x.UserId == userId && x.ProductId == productId);
+		return await context.UserFavProducts
+			.FirstOrDefaultAsync(x => x.UserId == userId && x.ProductId == productId);
 	}
 
-	public async Task DeleteFavProduct(UserFavProduct userFavProduct)
+	public Task<bool> IsFavoriteExistAsync(int userId, int productId)
 	{
-		context.UserFavProducts.Remove(userFavProduct);
-		await context.SaveChangesAsync();
+		return context.UserFavProducts
+			.AnyAsync(x => x.UserId == userId && x.ProductId == productId);
+	}
+
+	public async Task DeleteFavProductAsync(int id)
+	{
+		await context.UserFavProducts
+			.Where(x => x.Id == id)
+			.ExecuteDeleteAsync();
 	}
 }

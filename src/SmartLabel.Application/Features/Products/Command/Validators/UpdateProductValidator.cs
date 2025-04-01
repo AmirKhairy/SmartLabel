@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using SmartLabel.Application.Features.Products.Command.Models;
-using SmartLabel.Domain.Repositories;
+using SmartLabel.Application.Repositories;
 
 namespace SmartLabel.Application.Features.Products.Command.Validators;
 public class UpdateProductValidator : AbstractValidator<UpdateProductCommand>
@@ -30,7 +30,7 @@ public class UpdateProductValidator : AbstractValidator<UpdateProductCommand>
 	{
 		RuleFor(x => x.Name)
 			.MustAsync(async (productRequest, name, cancellationToken)
-				=> !await _repository.IsProductNameAndIdExist(productRequest.Id, name, cancellationToken))
+				=> !await _repository.IsProductNameAndIdExistAsync(productRequest.Id, name, cancellationToken))
 			.WithMessage("{PropertyName} name already exists.");
 	}
 }

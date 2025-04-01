@@ -1,11 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 using SmartLabel.Application.Bases;
 using SmartLabel.Application.Features.UserFavProducts.Command.Models;
+using SmartLabel.Application.Repositories;
 using SmartLabel.Domain.Entities;
-using SmartLabel.Domain.Repositories;
-using SmartLabel.Domain.Shared.Helpers;
+using SmartLabel.Domain.Helpers;
 using System.Security.Claims;
 
 namespace SmartLabel.Application.Features.UserFavProducts.Command.Handlers;
@@ -15,16 +14,21 @@ public class AddUserFavProductHandler(IUserFavProductRepository userFavProductRe
 	public async Task<Response<string>> Handle(AddUserFavProductCommand request, CancellationToken cancellationToken)
 	{
 		var userId = httpContextAccessor.HttpContext?.User?.FindFirstValue(nameof(UserClaimModel.UserId));
-		if (userId is null) throw new SecurityTokenException("You are not authenticated");
-		if (!await productRepository.IsProductExist(request.ProductId))
-			return NotFound<string>("This productId or userId is not found");
+		if (userId is null)
+			return Unauthorized<string>("Please login first");
+		if (!await productRepository.IsProductExistAsync(request.ProductId))
+			return NotFound<string>([$"Product ID: {request.ProductId} not found"], "Product discontinued");
+
+		if (await userFavProductRepository.IsFavoriteExistAsync(int.Parse(userId), request.ProductId))
+			return Success($"Product {request.ProductId} was already in your favorites");
+
 		var userFavProduct = new UserFavProduct()
 		{
 			Id = 0,
 			UserId = int.Parse(userId),
 			ProductId = request.ProductId
 		};
-		await userFavProductRepository.AddFavProduct(userFavProduct);
-		return Created<string>("Like is added successfully");
+		await userFavProductRepository.AddFavProductAsync(userFavProduct);
+		return Created<string>($"Product {request.ProductId} added to favorites");
 	}
 }

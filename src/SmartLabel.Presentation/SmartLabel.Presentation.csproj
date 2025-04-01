@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>SmartLabel.Presentation</RootNamespace>
+    <UserSecretsId>c0b79fcb-dea0-4da9-a393-ff0bb6da9c1b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
 	  <ProjectReference Include="..\SmartLabel.Infrastructure\SmartLabel.Infrastructure.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Folder Include="Properties\PublishProfiles\" />
 	  <Folder Include="wwwroot\Uploads\" />
 	</ItemGroup>
 

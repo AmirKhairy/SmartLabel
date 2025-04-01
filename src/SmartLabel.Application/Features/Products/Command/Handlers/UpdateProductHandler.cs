@@ -2,41 +2,38 @@
 using MediatR;
 using SmartLabel.Application.Bases;
 using SmartLabel.Application.Features.Products.Command.Models;
+using SmartLabel.Application.Repositories;
 using SmartLabel.Domain.Entities;
 using SmartLabel.Domain.Interfaces;
-using SmartLabel.Domain.Repositories;
 using SmartLabel.Domain.Services;
 
 namespace SmartLabel.Application.Features.Products.Command.Handlers;
-public class UpdateProductHandler(IMapper mapper, IProductRepository repository, IFileService fileService, IUnitOfWork unitOfWork)
+public class UpdateProductHandler(IMapper mapper, IProductRepository productRepository, IFileService fileService, IUnitOfWork unitOfWork)
 	: ResponseHandler, IRequestHandler<UpdateProductCommand, Response<string>>
 {
 	public async Task<Response<string>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
 	{
 
-		if (!await repository.IsProductExist(request.Id))
-		{
-			return NotFound<string>($"The product with id {request.Id} is not found");
-		}
-
+		if (!await productRepository.IsProductExistAsync(request.Id))
+			return NotFound<string>([$"Product ID: {request.Id} not found"], "Product discontinued");
 		using var transaction = await unitOfWork.BeginTransaction();
 		try
 		{
-			if (request.RemovedImageIds != null)
+			if (request.RemovedImageIds is not null)
 			{
-				foreach (var imageId in request.RemovedImageIds)
+				var imageUrls = await productRepository.GetProductImageUrlsByIdsAsync(request.RemovedImageIds);
+				foreach (var imageUrl in imageUrls)
 				{
-					var productImage = await repository.GetProductImageById(imageId);
-					if (productImage is null) continue;
-					await fileService.DeleteImageAsync(productImage.ImageUrl);
-					repository.DeleteProductImage(productImage);
+					await fileService.DeleteImageAsync(imageUrl);
 				}
+				await productRepository.DeleteProductImagesAsync(request.RemovedImageIds);
 			}
 
 			var product = mapper.Map<Product>(request);
-			repository.UpdateProduct(product);
+			await productRepository.UpdateProductAsync(product.Id, product);
 			if (request.ImagesFiles is not null)
 			{
+				var productImages = new List<ProductImage>();
 				foreach (var image in request.ImagesFiles)
 				{
 					var productImage = new ProductImage()
@@ -45,18 +42,19 @@ public class UpdateProductHandler(IMapper mapper, IProductRepository repository,
 						ImageUrl = await fileService.BuildImageAsync(image),
 						ProductId = product.Id
 					};
-					await repository.AddProductImage(productImage);
+					productImages.Add(productImage);
 				}
+				await productRepository.AddProductImagesAsync(productImages);
 			}
 
 			await unitOfWork.SaveChangesAsync(cancellationToken);
 			transaction.Commit();
-			return Updated<string>("Product is Updated successfully");
+			return NoContent<string>();
 		}
 		catch (Exception ex)
 		{
 			transaction.Rollback();
-			return InternalServerError<string>($"An error occurred: {ex.Message}");
+			return InternalServerError<string>([ex.Message], "Adding product temporarily unavailable");
 		}
 	}
 }

@@ -2,20 +2,15 @@
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.AuthenticationController",
     "Method": "SignIn",
-    "RelativePath": "api/Authentication/Login",
+    "RelativePath": "api/Authentication/login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "Email",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "Password",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "command",
+        "Type": "SmartLabel.Application.Features.Authentication.Command.Models.SignInCommand",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -23,7 +18,7 @@
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.AuthenticationController",
     "Method": "RefreshToken",
-    "RelativePath": "api/Authentication/Logout",
+    "RelativePath": "api/Authentication/logout",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -33,7 +28,7 @@
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.AuthenticationController",
     "Method": "RefreshToken",
-    "RelativePath": "api/Authentication/Refresh Token",
+    "RelativePath": "api/Authentication/refresh-token",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -41,6 +36,128 @@
       {
         "Name": "command",
         "Type": "SmartLabel.Application.Features.Authentication.Command.Models.RefreshTokenCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "AddRole",
+    "RelativePath": "api/Authorization/add-role/{name}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "AddUserToRole",
+    "RelativePath": "api/Authorization/assign-role",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "SmartLabel.Application.Features.Authorization.Command.Models.AddUserToRoleCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "DeleteRole",
+    "RelativePath": "api/Authorization/delete-role/{name}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "GetAllRoles",
+    "RelativePath": "api/Authorization/roles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "AddUserToRole",
+    "RelativePath": "api/Authorization/take-role",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "SmartLabel.Application.Features.Authorization.Command.Models.RemoveUserFromRoleCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "UpdateRole",
+    "RelativePath": "api/Authorization/update-role",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "SmartLabel.Application.Features.Authorization.Command.Models.UpdateRoleCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "UpdateUserToRole",
+    "RelativePath": "api/Authorization/update-user-role",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "SmartLabel.Application.Features.Authorization.Command.Models.UpdateUserToRoleCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.AuthorizationController",
+    "Method": "GetUserRoles",
+    "RelativePath": "api/Authorization/user-roles/{email}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "email",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -64,11 +181,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
       {
         "Name": "Title",
         "Type": "System.String",
@@ -178,7 +290,7 @@
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.BannerController",
     "Method": "GetActiveBanners",
-    "RelativePath": "api/Banner/Active",
+    "RelativePath": "api/Banner/active",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -187,7 +299,7 @@
   },
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.CategoryController",
-    "Method": "GetAllCategory",
+    "Method": "GetAllCategories",
     "RelativePath": "api/Category",
     "HttpMethod": "GET",
     "IsController": true,
@@ -203,11 +315,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
       {
         "Name": "Name",
         "Type": "System.String",
@@ -297,11 +404,6 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "Id",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
       {
         "Name": "Name",
         "Type": "System.String",
@@ -430,7 +532,7 @@
   },
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.UserController",
-    "Method": "AddUser",
+    "Method": "Register",
     "RelativePath": "api/User",
     "HttpMethod": "POST",
     "IsController": true,
@@ -462,6 +564,16 @@
   },
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.UserController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/User",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SmartLabel.Presentation.Controllers.UserController",
     "Method": "GetUserById",
     "RelativePath": "api/User/{id}",
     "HttpMethod": "GET",
@@ -478,24 +590,8 @@
   },
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.UserController",
-    "Method": "DeleteUser",
-    "RelativePath": "api/User/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "SmartLabel.Presentation.Controllers.UserController",
     "Method": "ChangePassword",
-    "RelativePath": "api/User/ChangePassword",
+    "RelativePath": "api/User/change-password",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -520,7 +616,7 @@
   },
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.UserFavProductController",
-    "Method": "AddFavoriteForProduct",
+    "Method": "AddFavForProduct",
     "RelativePath": "api/UserFavProduct/{productId}",
     "HttpMethod": "POST",
     "IsController": true,
@@ -536,7 +632,7 @@
   },
   {
     "ContainingType": "SmartLabel.Presentation.Controllers.UserFavProductController",
-    "Method": "DeleteFavoriteForProduct",
+    "Method": "DeleteFavForProducts",
     "RelativePath": "api/UserFavProduct/{productId}",
     "HttpMethod": "DELETE",
     "IsController": true,

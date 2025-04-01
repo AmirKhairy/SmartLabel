@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using SmartLabel.Application.Bases;
-using SmartLabel.Application.Features.Banners.Query.Results;
+using GetBannersDto = SmartLabel.Application.Features.Banners.Query.Results.GetBannersDto;
 
 namespace SmartLabel.Application.Features.Banners.Query.Models;
-public class GetAllBannersQuery : IRequest<Response<IEnumerable<GetBannerResult>>>
+public class GetAllBannersQuery : IRequest<Response<IEnumerable<GetBannersDto?>>>
 {
 }
