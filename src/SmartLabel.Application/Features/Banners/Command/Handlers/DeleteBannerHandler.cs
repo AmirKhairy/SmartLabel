@@ -16,14 +16,15 @@ public class DeleteBannerHandler(IBannerRepository bannerRepository, IFileServic
 			return NotFound<string>([$"Banner ID: {request.Id} not found"], "Banner discontinued");
 		try
 		{
+			if (banner.MainImage is not null)
+				await fileService.DeleteImageAsync(banner.MainImage);
 			if (banner.Images is not null)
 			{
 				foreach (var image in banner.Images)
-					await fileService.DeleteImageAsync(image);
+					await fileService.DeleteImageAsync(image.ImageUrl);
 			}
 
 			await bannerRepository.DeleteBannerAsync(request.Id);
-			await unitOfWork.SaveChangesAsync(cancellationToken);
 			return NoContent<string>();
 		}
 		catch (Exception ex)

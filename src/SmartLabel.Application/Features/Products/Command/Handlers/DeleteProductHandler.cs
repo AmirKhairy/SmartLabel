@@ -16,17 +16,19 @@ public class DeleteProductHandler(IProductRepository repository, IFileService fi
 
 		try
 		{
+			if (product.MainImage is not null)
+				await fileService.DeleteImageAsync(product.MainImage);
 			if (product.Images is not null)
 			{
 				foreach (var image in product.Images)
-					await fileService.DeleteImageAsync(image);
+					await fileService.DeleteImageAsync(image.ImageUrl);
 			}
 			await repository.DeleteProductAsync(request.Id);
 			return NoContent<string>();
 		}
 		catch (Exception ex)
 		{
-			return InternalServerError<string>([ex.Message], "Adding product temporarily unavailable");
+			return InternalServerError<string>([ex.Message], "Deleting product temporarily unavailable");
 
 		}
 	}
